@@ -55,7 +55,6 @@ public class BookApplicationTests {
 		
 		AuthorInput authorInput = new AuthorInput(authors.get(0));
 		books = bookQuery.findAllBooks(authorInput);
-		assertEqual()
 		assertTrue("", books.size() == 1);
 		assertNotNull("books[0] is null!", books.get(0));
 	}
