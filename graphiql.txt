@@ -1,0 +1,107 @@
+{
+ findAllBooks {
+   id
+   isbn
+   title
+   pageCount
+   author {
+    firstName
+    lastName
+  }
+ }
+}
+-------------------
+query GetAllBooks {
+ findAllBooks {
+   id
+   isbn
+   title
+   pageCount
+   author {
+    firstName
+    lastName
+  }
+ }
+}
+mutation CreateNewBook {
+  newBook(title: "My Second GraphQL Book", isbn: "9876543210", author: 1) {
+    id
+    title
+  }
+}
+-----------------------------
+query GetAllBooks {
+ findAllBooks {
+   id
+   isbn
+   title
+   pageCount
+   author {
+    firstName
+    lastName
+  }
+ }
+}
+mutation CreateNewBook {
+  newBook(title: "My Second GraphQL Book", isbn: "9876543210", author: 1) {
+    id title
+  }
+}
+mutation UpdatePageCount {
+  updateBookPageCount(pageCount: 1234, id: 3) {
+    id pageCount
+  }
+}
+------------------------
+query GetAllBooks {
+ findAllBooks {
+   id
+   isbn
+   title
+   pageCount
+   author {
+    firstName
+    lastName
+  }
+ }
+}
+mutation CreateNewBook {
+  newBook(title: "My Second GraphQL Book", isbn: "9876543210", author: 1) {
+    id title
+  }
+}
+mutation UpdatePageCount {
+  updateBookPageCount(pageCount: 1234, id: 3) {
+    id pageCount
+  }
+}
+mutation DeleteABook {
+  deleteBook(id: 4)
+}
+----------------------
+query GetAllBooks {
+ findAllBooks {
+   id
+   isbn
+   title
+   pageCount
+   author {
+    firstName
+    lastName
+  }
+ }
+}
+mutation CreateNewBook {
+  newBook(title: "My Second GraphQL Book", isbn: "9876543210", author: 1) { id title  }
+}
+mutation UpdatePageCount {
+  updateBookPageCount(pageCount: 1234, id: 3) { id pageCount  }
+}
+mutation DeleteABook {
+  deleteBook(id: 4)
+}
+mutation TryToUpdateNonExistingBook {
+  updateBookPageCount(pageCount: 123, id:20) {id pageCount}
+}
+---------------------------
+
