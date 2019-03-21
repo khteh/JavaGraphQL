@@ -99,11 +99,22 @@
 	</dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>
+		<defaultGoal>spring-boot:run</defaultGoal>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources/</directory>
+            </testResource>
+        </testResources>
+		<resources>
+	        <resource>
+	            <directory>src/main/resources</directory>
+	            <filtering>true</filtering>
+	        </resource>
+	    </resources>        
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>2.1.3.RELEASE</version>
 				<configuration>
 			        <mainClass>${start-class}</mainClass>
 			        <layout>WAR</layout>
@@ -116,55 +127,150 @@
 					</execution>
 			    </executions>				
 			</plugin>
-<!--            <plugin>
-            	<groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>1.4.9</version>
-                <configuration>
-					<imageName>${docker.image.prefix}</imageName>
-                	<repository>${docker.image.prefix}</repository>
-                   	<tag>${project.artifactId}-${project.version}</tag>
-                    <buildArgs>
-                      	<JAR_FILE>target/${project.build.finalName}.war</JAR_FILE>
-                    </buildArgs>
-            	</configuration>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
                 <executions>
-					<execution>
-					      <id>build-image</id>
-					      <phase>package</phase>
-					      <goals>
-					        <goal>build</goal>
-					      </goals>
-				    </execution>
                     <execution>
-					      <id>tag-image</id>
-					      <phase>package</phase>
-					      <goals>
-					        <goal>tag</goal>
-					      </goals>
-					      <configuration>
-					        <image>${docker.image.prefix}</image>
-					        <newName>${docker.image.prefix}:${project.artifactId}-${project.version}</newName>
-					      </configuration>
-					</execution>
-                	<execution>
-                    	<id>install</id>
-                    	<phase>install</phase>
+                        <id>default-resources</id>
+                        <phase>validate</phase>
                         <goals>
-                            <goal>push</goal>
+                            <goal>copy-resources</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>target/classes</outputDirectory>
+                            <useDefaultDelimiters>false</useDefaultDelimiters>
+                            <delimiters>
+                                <delimiter>#</delimiter>
+                            </delimiters>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/*.xml</include>
+                                        <include>**/*.yml</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>src/main/resources/</directory>
+                                    <filtering>false</filtering>
+                                    <excludes>
+                                        <exclude>**/*.xml</exclude>
+                                        <exclude>**/*.yml</exclude>
+                                    </excludes>
+                                </resource>
+                            </resources>
+                        </configuration>
                     </execution>
                 </executions>
-			</plugin>-->
+            </plugin>
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-surefire-plugin</artifactId>
+			    <version>3.0.0-M2</version>
+				<configuration>
+		            <includes>
+		                <include>**/*Test*.java</include>
+		            </includes>
+		        </configuration>			    
+			</plugin>			
 		</plugins>
 		<extensions>
 		    <extension>
 		      <groupId>com.spotify</groupId>
 		      <artifactId>dockerfile-maven-extension</artifactId>
-		      <version>1.4.9</version>
+		      <version>1.4.10</version>
 		    </extension>
 	  	</extensions>		
 	</build>
+	<profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+			<build>
+				<finalName>${project.artifactId}</finalName>
+				<plugins>
+					<plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <profiles>
+                                <profile>dev</profile>
+                            </profiles>
+                        </configuration>
+                    </plugin>				
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<build>
+				<finalName>${project.artifactId}</finalName>
+				<plugins>
+		            <plugin>
+		            	<groupId>com.spotify</groupId>
+		                <artifactId>dockerfile-maven-plugin</artifactId>
+		                <version>1.4.10</version>
+		                <configuration>
+							<imageName>${docker.image.prefix}</imageName>
+		 					<!--<dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>-->
+							<!--<resources>
+								<resource>
+									<targetPath>/</targetPath>
+									<directory>${project.build.directory}</directory>
+									<include>target/${project.build.finalName}.jar</include>
+								</resource>
+							</resources>-->					                
+		                	<repository>${docker.image.prefix}</repository>
+		                   	<tag>${project.artifactId}-${project.version}</tag>
+		                    <buildArgs>
+		                      	<JAR_FILE>target/${project.build.finalName}.war</JAR_FILE>
+		                    </buildArgs>
+		            	</configuration>
+		                <executions>
+							<execution>
+							      <id>build-image</id>
+							      <phase>package</phase>
+							      <goals>
+							        <goal>build</goal>
+							      </goals>
+						    </execution>
+		                    <execution>
+							      <id>tag-image</id>
+							      <phase>package</phase>
+							      <goals>
+							        <goal>tag</goal>
+							      </goals>
+							      <configuration>
+							        <image>${docker.image.prefix}</image>
+							        <newName>${docker.image.prefix}:${project.artifactId}-${project.version}</newName>
+							      </configuration>
+							</execution>
+		                	<execution>
+		                    	<id>install</id>
+		                    	<phase>install</phase>
+		                        <goals>
+		                            <goal>push</goal>
+		                        </goals>
+		                    </execution>
+		                </executions>            	
+					</plugin>
+					<plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <profiles>
+                                <profile>prod</profile>
+                            </profiles>
+                        </configuration>
+                    </plugin>				
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<repositories>
 		<repository>
         	<id>spring-releases</id>
