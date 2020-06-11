@@ -11,15 +11,15 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.0.BUILD-SNAPSHOT</version>
+		<version>2.3.0.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<properties>
-		<docker.image.prefix>khteh/tomcat</docker.image.prefix>
+		<docker.image.prefix>khteh</docker.image.prefix>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>11</java.version>
-		<start-class>com.graphql.book.BookApplication</start-class>
+		<java.version>14</java.version>
+		<start-class>com.graphql.book.GraphQLApplication</start-class>
 	</properties>
 	<dependencies>
 <!-- JPA Data (We are going to use Repositories, Entities, Hibernate, etc...) -->	
@@ -31,17 +31,35 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.graphql-java/graphql-spring-boot-starter -->
+		<!-- https://mvnrepository.com/artifact/com.graphql-java-kickstart/graphql-spring-boot-starter -->
 		<dependency>
-		    <groupId>com.graphql-java</groupId>
+		    <groupId>com.graphql-java-kickstart</groupId>
 		    <artifactId>graphql-spring-boot-starter</artifactId>
-		    <version>5.0.2</version>
+		    <version>7.0.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.graphql-java-kickstart/graphiql-spring-boot-starter -->
+		<dependency>
+		    <groupId>com.graphql-java-kickstart</groupId>
+		    <artifactId>graphiql-spring-boot-starter</artifactId>
+		    <version>7.0.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.graphql-java/graphql-java-tools -->
 		<dependency>
 		    <groupId>com.graphql-java</groupId>
 		    <artifactId>graphql-java-tools</artifactId>
 		    <version>5.2.4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.graphql-java/graphql-java-servlet -->
+		<dependency>
+		    <groupId>com.graphql-java-kickstart</groupId>
+		    <artifactId>graphql-java-servlet</artifactId>
+		    <version>9.1.0</version>
+		</dependency>
+				<!-- https://mvnrepository.com/artifact/javax.inject/javax.inject -->
+		<dependency>
+		    <groupId>javax.inject</groupId>
+		    <artifactId>javax.inject</artifactId>
+		    <version>1</version>
 		</dependency>
  		<dependency>
 			<groupId>javax.xml.bind</groupId>
@@ -67,12 +85,13 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-entitymanager -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>5.4.1.Final</version>
-        </dependency>
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-core</artifactId>
+		    <version>5.4.17.Final</version>
+		    <type>pom</type>
+		</dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-envers</artifactId>
@@ -80,7 +99,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-jcache</artifactId>
-            <version>5.4.1.Final</version>
+            <version>5.4.17.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
@@ -96,30 +115,34 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
+		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		    <version>1.18.12</version>
+		    <scope>provided</scope>
+		</dependency>
+		<dependency>
+		    <groupId>com.graphql-java-kickstart</groupId>
+		    <artifactId>graphql-spring-boot-starter-test</artifactId>
+		    <version>7.0.1</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+	        <groupId>org.junit.jupiter</groupId>
+	        <artifactId>junit-jupiter</artifactId>
+	        <version>5.7.0-M1</version>
+	        <scope>test</scope>
+	    </dependency>		
+<!-- Thanks for using https://jar-download.com -->
 	</dependencies>
 	<build>
-		<finalName>${project.artifactId}</finalName>
-		<defaultGoal>spring-boot:run</defaultGoal>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources/</directory>
-            </testResource>
-        </testResources>
-		<resources>
-	        <resource>
-	            <directory>src/main/resources</directory>
-	            <filtering>true</filtering>
-	        </resource>
-	    </resources>        
+		<finalName>${artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
+<!-- 				<configuration>
 			        <mainClass>${start-class}</mainClass>
 			        <layout>WAR</layout>
 		      	</configuration>				
@@ -130,61 +153,53 @@
 			          </goals>
 					</execution>
 			    </executions>				
-			</plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
+ -->			</plugin>
+<!--            <plugin>
+            	<groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.4.9</version>
+                <configuration>
+					<imageName>${docker.image.prefix}</imageName>
+                	<repository>${docker.image.prefix}</repository>
+                   	<tag>${project.artifactId}-${project.version}</tag>
+                    <buildArgs>
+                      	<JAR_FILE>target/${project.build.finalName}.war</JAR_FILE>
+                    </buildArgs>
+            	</configuration>
                 <executions>
+					<execution>
+					      <id>build-image</id>
+					      <phase>package</phase>
+					      <goals>
+					        <goal>build</goal>
+					      </goals>
+				    </execution>
                     <execution>
-                        <id>default-resources</id>
-                        <phase>validate</phase>
+					      <id>tag-image</id>
+					      <phase>package</phase>
+					      <goals>
+					        <goal>tag</goal>
+					      </goals>
+					      <configuration>
+					        <image>${docker.image.prefix}</image>
+					        <newName>${docker.image.prefix}:${project.artifactId}-${project.version}</newName>
+					      </configuration>
+					</execution>
+                	<execution>
+                    	<id>install</id>
+                    	<phase>install</phase>
                         <goals>
-                            <goal>copy-resources</goal>
+                            <goal>push</goal>
                         </goals>
-                        <configuration>
-                            <outputDirectory>target/classes</outputDirectory>
-                            <useDefaultDelimiters>false</useDefaultDelimiters>
-                            <delimiters>
-                                <delimiter>#</delimiter>
-                            </delimiters>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/resources/</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>**/*.xml</include>
-                                        <include>**/*.yml</include>
-                                    </includes>
-                                </resource>
-                                <resource>
-                                    <directory>src/main/resources/</directory>
-                                    <filtering>false</filtering>
-                                    <excludes>
-                                        <exclude>**/*.xml</exclude>
-                                        <exclude>**/*.yml</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>
                     </execution>
                 </executions>
-            </plugin>
-			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-surefire-plugin</artifactId>
-			    <version>3.0.0-M2</version>
-				<configuration>
-		            <includes>
-		                <include>**/*Test*.java</include>
-		            </includes>
-		        </configuration>			    
-			</plugin>			
+			</plugin>-->
 		</plugins>
 		<extensions>
 		    <extension>
 		      <groupId>com.spotify</groupId>
 		      <artifactId>dockerfile-maven-extension</artifactId>
-		      <version>1.4.10</version>
+		      <version>1.4.9</version>
 		    </extension>
 	  	</extensions>		
 	</build>
@@ -217,54 +232,63 @@
 		            <plugin>
 		            	<groupId>com.spotify</groupId>
 		                <artifactId>dockerfile-maven-plugin</artifactId>
-		                <version>1.4.10</version>
-		                <configuration>
-							<imageName>${docker.image.prefix}</imageName>
-		 					<!--<dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>-->
-							<!--<resources>
-								<resource>
-									<targetPath>/</targetPath>
-									<directory>${project.build.directory}</directory>
-									<include>target/${project.build.finalName}.jar</include>
-								</resource>
-							</resources>-->					                
-		                	<repository>${docker.image.prefix}</repository>
-		                   	<tag>${project.artifactId}-${project.version}</tag>
-		                    <buildArgs>
-		                      	<JAR_FILE>target/${project.build.finalName}.war</JAR_FILE>
-		                    </buildArgs>
-		            	</configuration>
+		                <version>1.4.13</version>
 		                <executions>
 							<execution>
-							      <id>build-image</id>
-							      <phase>package</phase>
-							      <goals>
+							    <id>build-image</id>
+							    <phase>package</phase>
+							    <goals>
 							        <goal>build</goal>
-							      </goals>
+							    </goals>
+							    <configuration>
+							        <repository>${project.artifactId}</repository>
+							    </configuration>
 						    </execution>
 		                    <execution>
-							      <id>tag-image</id>
-							      <phase>package</phase>
-							      <goals>
+							    <id>tag-image-latest</id>
+							    <phase>package</phase>
+							    <goals>
 							        <goal>tag</goal>
-							      </goals>
-							      <configuration>
-							        <image>${docker.image.prefix}</image>
-							        <newName>${docker.image.prefix}:${project.artifactId}-${project.version}</newName>
-							      </configuration>
+							    </goals>
+							    <configuration>
+									<repository>${docker.image.prefix}/${project.artifactId}</repository>
+						            <tag>latest</tag>
+								</configuration>
+							</execution>
+		                    <execution>
+							    <id>tag-image-version</id>
+							    <phase>package</phase>
+							    <goals>
+							        <goal>tag</goal>
+							    </goals>
+							    <configuration>
+									<repository>${docker.image.prefix}/${project.artifactId}</repository>
+						            <tag>${project.version}</tag>
+								</configuration>
 							</execution>
 		                	<execution>
-		                    	<id>install</id>
+		                    	<id>push-latest-image</id>
 		                    	<phase>install</phase>
 		                        <goals>
 		                            <goal>push</goal>
 		                        </goals>
+							    <configuration>
+									<repository>${docker.image.prefix}/${project.artifactId}</repository>
+						            <tag>latest</tag>
+								</configuration>
 		                    </execution>
 		                </executions>            	
 					</plugin>
 					<plugin>
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
+		                <executions>
+		                    <execution>
+		                        <goals>
+		                            <goal>build-info</goal>
+		                        </goals>
+		                    </execution>
+		                </executions>
                         <configuration>
                             <profiles>
                                 <profile>prod</profile>
@@ -274,12 +298,8 @@
 				</plugins>
 			</build>
 		</profile>
-	</profiles>
+	</profiles>	
 	<repositories>
-		<repository>
-        	<id>spring-releases</id>
-	        <url>https://repo.spring.io/libs-release</url>
-    	</repository>	
 		<repository>
 			<id>spring-snapshots</id>
 			<name>Spring Snapshots</name>
@@ -296,15 +316,14 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
-		<repository>
-		  <id>spring-libs-snapshot</id>
-		  <name>Spring Snapshot Repository</name>
-		  <url>http://repo.spring.io/libs-snapshot</url>
-		</repository>	
 	    <repository>
 	      <id>jcenter</id>
 	      <url>https://jcenter.bintray.com/</url>
 	    </repository>
+        <repository>
+            <id>spring-releases</id>
+            <url>https://repo.spring.io/libs-release</url>
+        </repository>
 		 <repository>
 		    <id>oss-snapshot-local</id>
 		    <name>jfrog</name>
@@ -320,21 +339,5 @@
             <id>spring-releases</id>
             <url>https://repo.spring.io/libs-release</url>
         </pluginRepository>
-		<pluginRepository>
-			<id>spring-snapshots</id>
-			<name>Spring Snapshots</name>
-			<url>https://repo.spring.io/snapshot</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>spring-milestones</id>
-			<name>Spring Milestones</name>
-			<url>https://repo.spring.io/milestone</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
     </pluginRepositories>	
 </project>

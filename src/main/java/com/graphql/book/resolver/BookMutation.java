@@ -2,20 +2,21 @@ package com.graphql.book.resolver;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
-import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.graphql.book.exception.BookNotFoundException;
 import com.graphql.book.model.Author;
 import com.graphql.book.model.Book;
 import com.graphql.book.repository.AuthorRepository;
 import com.graphql.book.repository.BookRepository;
 
-//public class BookMutation extends Mutation {
-public class BookMutation implements GraphQLMutationResolver {
-	@Autowired
-	private BookRepository bookRepository;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+/*
+public class BookMutation extends Mutation {//implements GraphQLMutationResolver {
+	@Builder
+	public BookMutation(AuthorRepository author, BookRepository book) {
+		super(book, author);
+	}	
 	public Book newBook(String title, String isbn, Integer pageCount, Long authorId) {
 		Book book = new Book(title, isbn, pageCount != null? pageCount : 0, new Author(authorId));
 		bookRepository.save(book);
@@ -30,4 +31,4 @@ public class BookMutation implements GraphQLMutationResolver {
 		bookRepository.save(book.get());
 		return book.get();
 	}
-}
+}*/

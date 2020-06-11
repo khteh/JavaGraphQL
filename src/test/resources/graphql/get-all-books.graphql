@@ -1,0 +1,12 @@
+query {
+ findAllBooks {
+   id
+   isbn
+   title
+   pageCount
+   author {
+    firstName
+    lastName
+  }
+ }
+}

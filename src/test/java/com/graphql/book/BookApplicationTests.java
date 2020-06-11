@@ -1,10 +1,10 @@
 package com.graphql.book;
 import static org.junit.Assert.assertNotNull;
-//import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,10 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.graphql.book.model.Author;
 import com.graphql.book.model.AuthorInput;
 import com.graphql.book.model.Book;
-import com.graphql.book.resolver.AuthorMutation;
-import com.graphql.book.resolver.AuthorQuery;
-import com.graphql.book.resolver.BookMutation;
-import com.graphql.book.resolver.BookQuery;
+import com.graphql.book.resolver.Query;
 
 @RunWith(SpringRunner.class)
 //@SpringBootTest
@@ -26,10 +23,12 @@ import com.graphql.book.resolver.BookQuery;
 // https://github.com/graphql-java-kickstart/graphql-spring-boot/issues/113
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BookApplicationTests {
+	//@Autowired
+	//AuthorQuery authorQuery;
+	//@Autowired
+	//BookQuery bookQuery;
 	@Autowired
-	AuthorQuery authorQuery;
-	@Autowired
-	BookQuery bookQuery;
+	Query query;
 	@Test
 	public void contextLoads() {
 		/*
@@ -40,21 +39,20 @@ public class BookApplicationTests {
 		BookMutation bookMutation = new BookMutation();
 		assertNotNull("", bookMutation);
 		*/
-		assertNotNull("authorQuery is null!", authorQuery);
-		assertNotNull("bookQuery is null!", bookQuery);
+		assertNotNull("Query is null!", query);
 		
-		List<Author> authors = authorQuery.findAllAuthors();
+		List<Author> authors = StreamSupport.stream(query.findAllAuthors().spliterator(), false).collect(Collectors.toList());
 		assertNotNull("authors is null!", authors);
 		assertTrue("", authors.size() >= 1);
 		assertNotNull("authors[0] is null!", authors.get(0));
 		
-		List<Book> books = bookQuery.findAllBooks();
+		List<Book> books = StreamSupport.stream(query.findAllBooks().spliterator(), false).collect(Collectors.toList());
 		assertNotNull("books is null!", books);
 		assertTrue("", books.size() >= 1);
 		assertNotNull("books[0] is null!", books.get(0));
 		
 		AuthorInput authorInput = new AuthorInput(authors.get(0));
-		books = bookQuery.findAllBooks(authorInput);
+		books = query.findAllBooks(authorInput);
 		assertTrue("", books.size() == 1);
 		assertNotNull("books[0] is null!", books.get(0));
 	}

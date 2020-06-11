@@ -1,0 +1,63 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /graphql-book
+spring:
+  application:
+    name: GraphQLAPI
+  profiles: dev
+  h2.console:
+    enabled: true
+    path: /h2-console
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://localhost:3306/book?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    #username: guest
+    #password: P@$$w0rd
+    username: guest
+    password: P@$$w0rd # set this in tomcat setenv.sh with -Dspring.datasource.password    
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+        maxLifetime: 180000
+graphql:
+  servlet:
+    enabled: true
+    corsEnabled: true
+    exception-handlers-enabled: true
+    mapping: /graphql-book
+    tracing-enabled: true
+    actuator-metrics: true    
+  tools:
+    schema-location-pattern: "**/*.graphqls"
+        # Enable or disable the introspection query. Disabling it puts your server in contravention of the GraphQL
+        # specification and expectations of most clients, so use this option with caution
+    introspection-enabled: true
+graphiql:
+    mapping: /graphiql-book
+    endpoint:
+      graphql: /graphql-book
+      #subscriptions: /subscriptions
+    #subscriptions:
+    #  timeout: 30
+    #  reconnect: false
+    static:
+      basePath: /
+    enabled: true
+    pageTitle: GraphiQL
+    cdn:
+        enabled: false
+        version: 0.13.0
+    #props:
+    #    resources:
+    #        query: query.graphql
+            #defaultQuery: defaultQuery.graphql
+    #        variables: variables.graphql
+    #    variables:
+    #        editorTheme: "solarized light"
+    headers:
+        Authorization: "Bearer <your-token>"
