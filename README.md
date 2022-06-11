@@ -1,4 +1,4 @@
-# Book GraphQL API
+# Java GraphQL API
 Simple GraphQL design and implementation using GraphQL Java which runs on Tomcat
 Followed the tutorial from https://www.pluralsight.com/guides/building-a-graphql-server-with-spring-boot
 
